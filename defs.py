@@ -46,9 +46,10 @@ def format_defs_for_speech(defs):
     for word in defs:
         sentences.append('{}, {}, {}.'.format(
             word,
-            defs[word]['pos'],
+            defs[word]['pos'].lower(),
             defs[word]['def']
         ))
+    return sentences
 
 
 if __name__ == '__main__':
