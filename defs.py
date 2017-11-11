@@ -1,6 +1,5 @@
 from PyDictionary import PyDictionary
 import nltk
-from pprint import pprint
 
 
 def get_10000():
@@ -41,6 +40,18 @@ def get_definitions(words):
     return defs
 
 
+def format_defs_for_speech(defs):
+    # Returns a list of sentences of definitions
+    sentences = []
+    for word in defs:
+        sentences.append('{}, {}, {}.'.format(
+            word,
+            defs[word]['pos'].lower(),
+            defs[word]['def']
+        ))
+    return sentences
+
+
 if __name__ == '__main__':
     exclude = get_10000()
 
@@ -50,4 +61,4 @@ if __name__ == '__main__':
     filtered = filter_words(pos, exclude)
     defs = get_definitions(filtered)
 
-    pprint(defs)
+    print('\n'.join(format_defs_for_speech(defs)))
