@@ -11,7 +11,14 @@ def get_10000():
 
 def get_pos(sentence):
     words_list = nltk.word_tokenize(sentence)
-    return nltk.pos_tag(words_list)
+    new_list = []
+    for i in range(len(words_list)-1):
+        if '\'' not in words_list[i] and '\'' not in words_list[i+1]:
+            new_list.append(words_list[i])
+    if '\'' not in words_list[-1]:
+        new_list.append(words_list[-1])
+    print(new_list)
+    return nltk.pos_tag(new_list)
 
 
 
@@ -83,10 +90,10 @@ def speech_to_text():
 if __name__ == '__main__':
     exclude = get_10000()
 
-    example = speech_to_text()
-    print(example)
-    pos = get_pos(example)
+    #example = speech_to_text()
+    #print(example)
+    pos = get_pos("he's not here right now asparagus")
     filtered = filter_words(pos, exclude)
+    print(pos)
     defs = get_definitions(filtered)
-
     print(defs)
