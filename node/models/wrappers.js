@@ -1,6 +1,7 @@
 const PythonShell = require('python-shell');
+const { parseDefinitions, speakManyText } = require('./textToSpeech.js');
 
-function runPython(scriptName, scriptPath) {
+function runPython(scriptName, scriptPath, onFunction) {
   const pyshell = new PythonShell(scriptName, { 'scriptPath': __dirname + '/../../' + scriptPath});
 
   pyshell.on('message', (message) => {
