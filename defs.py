@@ -3,7 +3,7 @@ import nltk
 
 
 def get_10000():
-    with open('google-10000-english-usa.txt', 'r') as file:
+    with open('docs/google-10000-english-usa.txt', 'r') as file:
         words = file.readlines()
     return set([w.strip() for w in words])
 
