@@ -33,23 +33,25 @@ def get_definitions(words):
         else:
             continue
         definitions = dictionary.meaning(word)
-        defs[word] = {
-            'pos': part,
-            'def': definitions[part][0]
-        }
+        if part in definitions:
+            defs[word] = {
+                'pos': part,
+                'def': definitions[part][0]
+            }
     return defs
 
 
-def format_defs_for_speech(defs):
-    # Returns a list of sentences of definitions
-    sentences = []
-    for word in defs:
-        sentences.append('{}, {}, {}.'.format(
-            word,
-            defs[word]['pos'].lower(),
-            defs[word]['def']
-        ))
-    return sentences
+# MOVED TO NODE
+# def format_defs_for_speech(defs):
+#     # Returns a list of sentences of definitions
+#     sentences = []
+#     for word in defs:
+#         sentences.append('{}, {}, {}.'.format(
+#             word,
+#             defs[word]['pos'].lower(),
+#             defs[word]['def']
+#         ))
+#     return sentences
 
 
 if __name__ == '__main__':
@@ -61,4 +63,4 @@ if __name__ == '__main__':
     filtered = filter_words(pos, exclude)
     defs = get_definitions(filtered)
 
-    print('\n'.join(format_defs_for_speech(defs)))
+    print(defs)
