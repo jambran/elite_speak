@@ -1,0 +1,22 @@
+{
+  "name": "elite_speak",
+  "version": "1.0.0",
+  "description": "An application for figuring out those pesky words that your know-it-all friends say",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jambran/elite_speak.git"
+  },
+  "author": "Alex T. Reese, Ben Albert, Ellis Miranda, Lizzie Koshelev, Jamie Brandon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jambran/elite_speak/issues"
+  },
+  "homepage": "https://github.com/jambran/elite_speak#readme"
+}
