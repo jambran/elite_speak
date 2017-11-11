@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/jambran/elite_speak/issues"
   },
-  "homepage": "https://github.com/jambran/elite_speak#readme"
+  "homepage": "https://github.com/jambran/elite_speak#readme",
+  "dependencies": {
+    "python-shell": "^0.4.0"
+  }
 }
