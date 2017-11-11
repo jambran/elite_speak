@@ -36,12 +36,13 @@ def get_definitions(words):
             continue
         try:
             definitions = dictionary.meaning(word)
-            defs[word] = {
-                'pos': part,
-                'def': definitions[part][0]
-            }
+            if part in definitions:
+                defs[word] = {
+                    'pos': part,
+                    'def': definitions[part][0]
+                }
         except TypeError:
-            return
+            continue
     return defs
 
 
@@ -66,16 +67,18 @@ def speech_to_text():
     return input
   
   
-def format_defs_for_speech(defs):
-    # Returns a list of sentences of definitions
-    sentences = []
-    for word in defs:
-        sentences.append('{}, {}, {}.'.format(
-            word,
-            defs[word]['pos'].lower(),
-            defs[word]['def']
-        ))
-    return sentences
+# MOVED TO NODE
+# def format_defs_for_speech(defs):
+#     # Returns a list of sentences of definitions
+#     sentences = []
+#     for word in defs:
+#         sentences.append('{}, {}, {}.'.format(
+#             word,
+#             defs[word]['pos'].lower(),
+#             defs[word]['def']
+#         ))
+#     return sentences
+
 
 if __name__ == '__main__':
     exclude = get_10000()
@@ -85,5 +88,5 @@ if __name__ == '__main__':
     pos = get_pos(example)
     filtered = filter_words(pos, exclude)
     defs = get_definitions(filtered)
-    pprint(defs)
-    print('\n'.join(format_defs_for_speech(defs)))
+
+    print(defs)
