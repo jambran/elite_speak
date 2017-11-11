@@ -4,7 +4,7 @@ from pprint import pprint
 import speech_recognition as sr
 
 def get_10000():
-    with open('google-10000-english-usa.txt', 'r') as file:
+    with open('docs/google-10000-english-usa.txt', 'r') as file:
         words = file.readlines()
     return set([w.strip() for w in words])
 
@@ -64,6 +64,18 @@ def speech_to_text():
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
     return input
+  
+  
+def format_defs_for_speech(defs):
+    # Returns a list of sentences of definitions
+    sentences = []
+    for word in defs:
+        sentences.append('{}, {}, {}.'.format(
+            word,
+            defs[word]['pos'].lower(),
+            defs[word]['def']
+        ))
+    return sentences
 
 if __name__ == '__main__':
     exclude = get_10000()
@@ -74,3 +86,4 @@ if __name__ == '__main__':
     filtered = filter_words(pos, exclude)
     defs = get_definitions(filtered)
     pprint(defs)
+    print('\n'.join(format_defs_for_speech(defs)))
