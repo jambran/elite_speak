@@ -13,7 +13,7 @@ def get_pos(sentence):
     words_list = nltk.word_tokenize(sentence)
     new_list = []
     for i in range(len(words_list)-1):
-        if '\'' not in words_list[i] and '\'' not in words_list[i+1]:
+        if '\'' not in words_list[i] and 'n\'t' not in words_list[i+1]:
             new_list.append(words_list[i])
     if '\'' not in words_list[-1]:
         new_list.append(words_list[-1])
@@ -42,11 +42,13 @@ def get_definitions(words):
             continue
         try:
             definitions = dictionary.meaning(word)
-            if part in definitions:
-                defs[word] = {
+            if part not in definitions:
+                part = list(definitions.keys())[0]
+            defs[word] = {
                     'pos': part,
                     'def': definitions[part][0]
                 }
+                
         except TypeError:
             continue
     return defs
@@ -58,7 +60,9 @@ def speech_to_text():
     with sr.Microphone() as source:
         print("Say something!")
         r.adjust_for_ambient_noise(source, duration=1)
+        r.dynamic_energy_threshold = True
         audio = r.listen(source)
+        print("Done!")
     input = ""
     # recognize speech using Google Speech Recognition
     try:
@@ -89,9 +93,9 @@ def speech_to_text():
 if __name__ == '__main__':
     exclude = get_10000()
 
-    #example = speech_to_text()
-    #print(example)
-    pos = get_pos("he's not here right now asparagus")
+    example = speech_to_text()
+    print(example)
+    pos = get_pos(example)
     filtered = filter_words(pos, exclude)
     print(pos)
     defs = get_definitions(filtered)
