@@ -1,5 +1,6 @@
 from PyDictionary import PyDictionary
 import nltk
+import speech_recognition as sr
 
 
 def get_10000():
@@ -10,7 +11,14 @@ def get_10000():
 
 def get_pos(sentence):
     words_list = nltk.word_tokenize(sentence)
-    return nltk.pos_tag(words_list)
+    new_list = []
+    for i in range(len(words_list)-1):
+        if '\'' not in words_list[i] and 'n\'t' not in words_list[i+1]:
+            new_list.append(words_list[i])
+    if '\'' not in words_list[-1]:
+        new_list.append(words_list[-1])
+    print(new_list)
+    return nltk.pos_tag(new_list)
 
 
 def filter_words(l, w):
@@ -32,33 +40,63 @@ def get_definitions(words):
             part = 'Adverb'
         else:
             continue
-        definitions = dictionary.meaning(word)
-        defs[word] = {
-            'pos': part,
-            'def': definitions[part][0]
-        }
+        try:
+            definitions = dictionary.meaning(word)
+            if part not in definitions:
+                part = list(definitions.keys())[0]
+            defs[word] = {
+                    'pos': part,
+                    'def': definitions[part][0]
+                }
+                
+        except TypeError:
+            continue
     return defs
 
 
-def format_defs_for_speech(defs):
-    # Returns a list of sentences of definitions
-    sentences = []
-    for word in defs:
-        sentences.append('{}, {}, {}.'.format(
-            word,
-            defs[word]['pos'].lower(),
-            defs[word]['def']
-        ))
-    return sentences
+def speech_to_text():
+    # obtain audio from the microphone
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Say something!")
+        r.adjust_for_ambient_noise(source, duration=1)
+        r.dynamic_energy_threshold = True
+        audio = r.listen(source)
+        print("Done!")
+    input = ""
+    # recognize speech using Google Speech Recognition
+    try:
+        # for testing purposes, we're just using the default API key
+        # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+        # instead of `r.recognize_google(audio)`
+        input = r.recognize_google(audio)
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+    return input
+  
+  
+# MOVED TO NODE
+# def format_defs_for_speech(defs):
+#     # Returns a list of sentences of definitions
+#     sentences = []
+#     for word in defs:
+#         sentences.append('{}, {}, {}.'.format(
+#             word,
+#             defs[word]['pos'].lower(),
+#             defs[word]['def']
+#         ))
+#     return sentences
 
 
 if __name__ == '__main__':
     exclude = get_10000()
 
-    example = input('sentence: ')
-
+    example = speech_to_text()
+    print(example)
     pos = get_pos(example)
     filtered = filter_words(pos, exclude)
+    print(pos)
     defs = get_definitions(filtered)
-
-    print('\n'.join(format_defs_for_speech(defs)))
+    print(defs)
