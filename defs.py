@@ -1,7 +1,7 @@
 from PyDictionary import PyDictionary
 import nltk
-from pprint import pprint
 import speech_recognition as sr
+
 
 def get_10000():
     with open('docs/google-10000-english-usa.txt', 'r') as file:
@@ -19,7 +19,6 @@ def get_pos(sentence):
         new_list.append(words_list[-1])
     print(new_list)
     return nltk.pos_tag(new_list)
-
 
 
 def filter_words(l, w):
