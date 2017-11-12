@@ -10,11 +10,19 @@ def get_definitions(sentence, exclude):
 
 def main():
     common_words = defs.get_10000()
-    while True:
+    listDefs = []
+    done = False
+    while not done:
         voice_input = defs.speech_to_text()
-        definitions = get_definitions(voice_input, common_words)
-        print(definitions)
-        textToSpeech.say_definitions(definitions)
+        print(voice_input)
+        if "conversation over" not in voice_input.lower():
+            definitions = get_definitions(voice_input, common_words)
+            definitions = textToSpeech.parse_definitions(definitions)
+            listDefs.extend(definitions)
+            textToSpeech.speak_many_things(definitions)
+        else:
+            done = True
+    return listDefs
 
 
 if __name__ == '__main__':
