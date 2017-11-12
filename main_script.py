@@ -10,10 +10,18 @@ def get_definitions(sentence, exclude):
 
 def main():
     common_words = defs.get_10000()
+    lst = []
+    lst_threshold = 10
     while True:
         voice_input = defs.speech_to_text()
         definitions = get_definitions(voice_input, common_words)
-        print(definitions)
+        for k in definitions.keys():
+            lst.append(k + ": " +  str(definitions[k]))
+        if len(lst) > lst_threshold:
+            lst = lst[len(lst) - lst_threshold:]
+        lst.sort(reverse = True)
+        print(lst)
+        #print(definitions)
         textToSpeech.say_definitions(definitions)
 
 
