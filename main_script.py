@@ -1,5 +1,5 @@
 import defs
-import testToSpeech
+import textToSpeech
 
 
 def get_definitions(sentence, exclude):
@@ -13,7 +13,8 @@ def main():
     while True:
         voice_input = defs.speech_to_text()
         definitions = get_definitions(voice_input, common_words)
-        testToSpeech.say_definitions(definitions)
+        print(definitions)
+        textToSpeech.say_definitions(definitions)
 
 
 if __name__ == '__main__':
