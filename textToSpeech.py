@@ -1,4 +1,5 @@
 import pyttsx3
+import os
 
 
 def parse_definitions(definitions):
@@ -10,14 +11,13 @@ def parse_definitions(definitions):
 
 
 def speak_many_things(definitions):
-    engine = pyttsx3.init()
     for string in definitions:
         speak_thing(string)
 
 
-def speak_thing(definition, engine):
-    engine.say(definition)
-    engine.runAndWait()
+def speak_thing(definition):
+    command = 'say \"' + definition + '\"'
+    os.system(command)
 
 
 def say_definitions(definitions):
