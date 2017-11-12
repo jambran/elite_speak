@@ -1,4 +1,4 @@
-from elite_speak.python import defs
+from elite_speak import defs
 import sys
 
 
@@ -11,12 +11,10 @@ def get_definitions(sentence, exclude):
 def main():
     common_words = defs.get_10000()
     while True:
-        # get string from audio input
-        # wait until person is done talking
-        voice_input = input('>')
+        voice_input = defs.speech_to_text()
         definitions = get_definitions(voice_input, common_words)
-
-        sys.stdout.write('DEF_FLAG' + str(definitions).replace('\'', '\"'))  # print definitions as an event in Node
+        # print definitions to create event in Node
+        sys.stdout.write('DEF_FLAG' + str(definitions).replace('\'', '\"'))
 
 
 if __name__ == '__main__':
