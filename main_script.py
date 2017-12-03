@@ -1,6 +1,7 @@
 import defs
 import textToSpeech
 import threading
+from flask import Flask, render_template
 
 WORD_THRESHOLD = 10
 
@@ -46,7 +47,7 @@ def main():
             done = True
     # make sure that all threads are finished
     threads[-1].join()
-    textToSpeech.speak_many_things(word_list)
+    # textToSpeech.speak_many_things(word_list)
     return word_list
 
 
