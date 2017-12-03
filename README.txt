@@ -1,4 +1,4 @@
-### Elite Speak
+#Elite Speak
 
 Don't you hate it when you don't understand what someone is saying? Now, with Elite Speak, just press record and all those complicated words will be defined as they speak!
 
