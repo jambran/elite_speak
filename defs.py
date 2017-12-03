@@ -1,10 +1,12 @@
 from PyDictionary import PyDictionary
 import nltk
 import speech_recognition as sr
+import os
 
 
 def get_common_words():
-    with open('docs/wiki-100k.txt', 'r') as file:
+    file = 'docs' + os.sep + 'wiki-100k.txt'
+    with open(file, 'r') as file:
         words = file.readlines()
     return {w.lower().strip():True for w in words if not w.strip()[0] == '#'}
 
