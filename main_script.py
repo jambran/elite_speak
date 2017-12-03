@@ -1,5 +1,8 @@
 import defs
 import textToSpeech
+import threading
+
+WORD_THRESHOLD = 10
 
 
 def get_definitions(sentence, exclude):
@@ -8,25 +11,41 @@ def get_definitions(sentence, exclude):
     return defs.get_definitions(uncommon_words)
 
 
+def thread_work(voice_input, common_words, word_list, threads):
+    # gets definitions
+    definitions = get_definitions(voice_input, common_words)
+    # formats the definitions
+    formatted_definitions = textToSpeech.parse_definitions(definitions)
+    # grab the index of this thread in the list
+    index = threads.index(threading.current_thread())
+    # await the previous thread
+    if index != 0:
+        threads[index-1].join()
+
+    # will reorganize the list to include new entries (theoretically this works)
+    word_list[::-1]
+    word_list.extend(definitions)
+    if len(word_list) > WORD_THRESHOLD:
+        word_list = word_list[len(list) - WORD_THRESHOLD:]
+    word_list[::-1]
+
+
 def main():
     common_words = defs.get_common_words()
-    lst = []
-    lst_threshold = 10
+    threads = []
+    word_list = []
     done = False
     while not done:
         voice_input = defs.speech_to_text()
         if "conversation over" not in voice_input.lower():
-            definitions = get_definitions(voice_input, common_words)
-            definitions = textToSpeech.parse_definitions(definitions)
-            lst[::-1]
-            lst.extend(definitions)
-            if len(lst) > lst_threshold:
-              lst = lst[len(list) - lst_threshold:]
-            lst[::-1]
-            textToSpeech.speak_many_things(definitions)
+            # start a thread here
+            thread = threading.Thread(target=thread_work, args=[voice_input, common_words, word_list, threads])
+            threads.append(thread)
+            thread.start()
         else:
             done = True
-    return lst
+    textToSpeech.speak_many_things(word_list)
+    return word_list
 
 
 if __name__ == '__main__':
