@@ -3,10 +3,10 @@ import nltk
 import speech_recognition as sr
 
 
-def get_10000():
-    with open('docs/google-10000-english-usa.txt', 'r') as file:
+def get_common_words():
+    with open('docs/wiki-100k.txt', 'r') as file:
         words = file.readlines()
-    return set([w.strip() for w in words])
+    return {w.lower().strip():True for w in words if not w.strip()[0] == '#'}
 
 
 def get_pos(sentence):
@@ -21,9 +21,9 @@ def get_pos(sentence):
     return nltk.pos_tag(new_list)
 
 
-def filter_words(l, w):
+def filter_words(words, common_words):
     # Returns list of words not in set w
-    return [p for p in l if p[0] not in w]
+    return [w for w in words if w[0] not in common_words]
 
 
 def get_definitions(words):
@@ -91,7 +91,7 @@ def speech_to_text():
 
 
 if __name__ == '__main__':
-    exclude = get_10000()
+    exclude = get_common_words()
 
     example = speech_to_text()
     print(example)
