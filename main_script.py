@@ -9,7 +9,7 @@ def get_definitions(sentence, exclude):
 
 
 def main():
-    common_words = defs.get_10000()
+    common_words = defs.get_common_words()
     lst = []
     lst_threshold = 10
     done = False
