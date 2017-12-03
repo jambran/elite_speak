@@ -1,5 +1,6 @@
 # Python
 .idea/
+.pyc
 
 # Logs
 logs
