@@ -1,8 +1,5 @@
 from flask import Flask, render_template
-import os
 import main_script
-import defs
-import textToSpeech
 import threading
 
 app = Flask(__name__)

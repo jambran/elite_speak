@@ -1,22 +1,20 @@
-import defs
-import textToSpeech
+from models import define, words, speech
 import threading
-from flask import Flask, render_template
 
 WORD_THRESHOLD = 10
 
 
 def get_definitions(sentence, exclude):
-    parts_of_speech = defs.get_pos(sentence)
-    uncommon_words = defs.filter_words(parts_of_speech, exclude)
-    return defs.get_definitions(uncommon_words)
+    parts_of_speech = words.get_pos(sentence)
+    uncommon_words = words.filter_words(parts_of_speech, exclude)
+    return define.generate_definitions(uncommon_words)
 
 
 def thread_work(voice_input, common_words, word_list, threads):
     # gets definitions
-    definitions = get_definitions(voice_input, common_words)
+    definition_list = get_definitions(voice_input, common_words)
     # formats the definitions
-    formatted_definitions = textToSpeech.parse_definitions(definitions)
+    formatted_definitions = define.parse_speakable_definitions(definition_list)
     # grab the index of this thread in the list
     index = threads.index(threading.current_thread())
     # await the previous thread
@@ -32,19 +30,19 @@ def thread_work(voice_input, common_words, word_list, threads):
 
 
 def main():
-    common_words = defs.get_common_words()
+    common_words = words.get_common_words()
     threads = []
     word_list = []
     done = False
     while not done:
-        voice_input = defs.speech_to_text()
-        if "conversation over" not in voice_input.lower():
+        voice_input = speech.listen()
+        if "conversation over" in voice_input.lower():
+            done = True
+        else:
             # start a thread here
             thread = threading.Thread(target=thread_work, args=[voice_input, common_words, word_list, threads])
             threads.append(thread)
             thread.start()
-        else:
-            done = True
     # make sure that all threads are finished
     threads[-1].join()
     # textToSpeech.speak_many_things(word_list)
