@@ -10,7 +10,7 @@ l = l.split("\n")
 
 count = 0
 
-with open('new-wiki-100k.txt', 'w') as w:
+with open('wiki-67k.txt', 'w') as w:
     for line in l:
         if l[0] != "#" and d.check(line):
             count += 1
