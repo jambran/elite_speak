@@ -1,7 +1,9 @@
 from models import define, words, speech
 import threading
+import speech_recognition as sr
 
 WORD_THRESHOLD = 10
+done = False
 
 
 def get_definitions(sentence, exclude):
@@ -10,9 +12,14 @@ def get_definitions(sentence, exclude):
     return define.generate_definitions(uncommon_words)
 
 
-def thread_work(voice_input, common_words, word_list, threads):
+def thread_work(voice_input, common_words, word_list, r, threads):
+    voice_text = speech.recognize(voice_input, r)
+    if "conversation over" in voice_text.lower():
+        global done
+        done = True
+        return done
     # gets definitions
-    definition_list = get_definitions(voice_input, common_words)
+    definition_list = get_definitions(voice_text, common_words)
     # formats the definitions
     formatted_definitions = define.parse_speakable_definitions(definition_list)
     if len(formatted_definitions) != 0:
@@ -32,19 +39,16 @@ def thread_work(voice_input, common_words, word_list, threads):
 
 
 def main():
+    r = sr.Recognizer()
     common_words = words.get_common_words()
     threads = []
     word_list = []
-    done = False
     while not done:
-        voice_input = speech.listen()
-        if "conversation over" in voice_input.lower():
-            done = True
-        else:
-            # start a thread here
-            thread = threading.Thread(target=thread_work, args=[voice_input, common_words, word_list, threads])
-            threads.append(thread)
-            thread.start()
+        voice_input = speech.listen(r)
+        # start a thread here
+        thread = threading.Thread(target=thread_work, args=[voice_input, common_words, word_list, r, threads])
+        threads.append(thread)
+        thread.start()
     # make sure that all threads are finished
     threads[-1].join()
     # textToSpeech.speak_many_things(word_list)
