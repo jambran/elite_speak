@@ -57,15 +57,17 @@ def main():
 
 def main_console():
     print('Elite Speak ©\nby Alex T. Reese, Ellis Miranda, Jamie Brandon, Kirsten Stallings\n')
+    # use this to set up a certain level of word use as our list
+    vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
     finished = False
     word_list = []
     while not finished:
         start = input("\n1 : Start listening\n2 : Quit\n")
         if start == '1':
             word_list.extend(main())
+            words.print_words(word_list)
         else:
             finished = True
-    print(word_list)
 
 
 if __name__ == '__main__':
