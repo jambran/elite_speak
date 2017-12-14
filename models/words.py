@@ -3,7 +3,7 @@ import nltk
 
 
 def get_common_words():
-    file = 'docs' + os.sep + 'wiki-100k.txt'
+    file = 'docs' + os.sep + 'wiki-67k.txt'
     with open(file, 'r') as file:
         words = file.readlines()
     return {w.lower().strip(): True for w in words if not w.strip()[0] == '#'}
