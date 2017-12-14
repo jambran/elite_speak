@@ -15,6 +15,8 @@ def thread_work(voice_input, common_words, word_list, threads):
     definition_list = get_definitions(voice_input, common_words)
     # formats the definitions
     formatted_definitions = define.parse_speakable_definitions(definition_list)
+    if len(formatted_definitions) != 0:
+        print(formatted_definitions)
     # grab the index of this thread in the list
     index = threads.index(threading.current_thread())
     # await the previous thread
