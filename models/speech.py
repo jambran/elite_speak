@@ -18,15 +18,17 @@ def say_definitions(definitions):
     say_many(defs)
 
 
-def listen():
+def listen(r):
     # obtain audio from the microphone
-    r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Say something!")
+        print("listening...")
         r.adjust_for_ambient_noise(source, duration=1)
         r.dynamic_energy_threshold = True
         audio = r.listen(source)
-        print("Done!")
+        return audio
+
+
+def recognize(audio, r):
     heard = ""
     # recognize speech using Google Speech Recognition
     try:
@@ -39,3 +41,4 @@ def listen():
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
     return heard
+
