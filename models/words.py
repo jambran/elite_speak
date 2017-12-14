@@ -12,6 +12,8 @@ def get_common_words():
 def get_pos(sentence):
     words_list = nltk.word_tokenize(sentence)
     new_list = []
+    if len(words_list) == 0:
+        return []
     for i in range(len(words_list)-1):
         if '\'' not in words_list[i] and 'n\'t' not in words_list[i+1]:
             new_list.append(words_list[i])
@@ -23,3 +25,9 @@ def get_pos(sentence):
 def filter_words(words, common_words):
     # Returns list of words not in set w
     return [w for w in words if w[0] not in common_words]
+
+
+def print_words(words):
+    print('\nYour words:')
+    for word in words:
+        print(word)
