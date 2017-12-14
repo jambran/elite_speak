@@ -11,7 +11,7 @@ def main():
     # thread = threading.Thread(target=main_script.main, args=[])
     # thread.start()
     definitions = main_script.main()
-    return render_template('list.html', definitions=definitions)
+    return render_template('recording.html', definitions=definitions)
 
 
 @app.route('/')

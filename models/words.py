@@ -17,7 +17,6 @@ def get_pos(sentence):
             new_list.append(words_list[i])
     if len(new_list) > 0 and '\'' not in words_list[-1]:
         new_list.append(words_list[-1])
-    print(new_list)
     return nltk.pos_tag(new_list)
 
 

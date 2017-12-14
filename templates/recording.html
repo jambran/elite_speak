@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+        <script>
+            setInterval(
+                function() {
+                    $.getJSON(
+                        $'/record',
+                        {},
+                        function(data) {
+                            $("#result").text(data.result);
+                        });
+                },
+            500);
+        </script>
+
+        <title>Definitions!</title>
+    </head>
+    <body>
+        <h1>Hi there, here's your list of new words:</h1>
+        <p>
+            <span id=result>?</span>
+        </p>
+    </body>
+</html>
