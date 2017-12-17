@@ -1,4 +1,4 @@
-import main_script as ms
+
 import random as rand
 
 def flashcard_practice(my_words):
@@ -7,8 +7,8 @@ def flashcard_practice(my_words):
     attempts = 0
     while(guess != 'q'):
         word = rand.choice(list(my_words))
-        d = my_words[word][1]
-        pretty_print_def(d)
+        tple = my_words[word]
+        pretty_print_def(tple)
         guess = input("Please type the word (or q to quit): ")
         if(guess == 'q'):
             break;
@@ -17,26 +17,26 @@ def flashcard_practice(my_words):
             points += 1
             attempts += 1
         else:
+            attempts += 1
             again = input("Do you want to guess again? [y/n]")
             while(again == 'y'):
                 guess = input("Guess again: ")
                 attempts += 1
                 if(guess.lower() == word.lower()):
                     points += 1
-                    print("Correct!\n")
+                    print("Correct!\n\n")
                     break;
-                again = input("Do you want to guess again? [y/n]")
-            print("The word was: " + word)
-    print("You got this percentage: %.2f" % (points / attempts * 100))
+                again = input("Do you want to guess again? [y/n]  ")
+            print("The word was: " + word + "\n")
+    try:
+        print("You got this percentage: %.2f" % (points / attempts * 100))
+    except ZeroDivisionError:
+        print("\nYou got this percentage: 0.00%")
 
 
-def pretty_print_def(s):
-    s = s.replace("'", "")
-    pos, part_of_speech, d = s[1:-1].split(':', 2)
-    part_of_speech, junk = part_of_speech.split(",")
-    part_of_speech = part_of_speech[1:]
-    d = d[1:]
-    print("%20s %-s " % ("Part of Speech: ", part_of_speech))
+def pretty_print_def(tple):
+    d = tple[1]
+    print("%20s %-s " % ("Part of Speech: ", tple[3]))
     if (len(d) < 50):
         print("%20s %s" % ("Definition: ", d))
     else:

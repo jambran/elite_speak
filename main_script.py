@@ -27,9 +27,6 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words):
     definition_list = get_definitions(voice_text, common_words, my_words)
     # formats the definitions
     formatted_definitions = define.parse_speakable_definitions(definition_list)
-    if len(formatted_definitions) != 0:
-        #print(formatted_definitions)
-        words.pretty_print_words(formatted_definitions)
     # grab the index of this thread in the list
     index = threads.index(threading.current_thread())
     # await the previous thread
@@ -44,17 +41,17 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words):
     # put words and defs in personal dictionary, my_words
     for k in definition_list:
         try:
-            my_words[k] = (my_words[k][0] + 1, my_words[k][1], time.time())
-            print(k + str(my_words[k]))
+            my_words[k] = (my_words[k][0] + 1, my_words[k][1], time.time(), my_words[k][3])
         except KeyError:
-            my_words[k] = (1, str(definition_list[k]), time.time())
+            my_words[k] = (1, definition_list[k]['def'], time.time(), definition_list[k]['pos'])
+        words.pretty_print_word(k, my_words)
     word_list[::-1]
 
 
-def main():
+def main(username):
     r = sr.Recognizer()
     common_words = words.get_common_words()
-    my_words = open_pickle_jar()
+    my_words = open_pickle_jar(username)
     threads = []
     word_list = []
     while not done:
@@ -67,7 +64,7 @@ def main():
     threads[-1].join()
     # textToSpeech.speak_many_things(word_list)
     # pickle my_words
-    output = open("pickle_jar.pkl", 'wb')
+    output = open(username + ".pkl", 'wb')
     dump(my_words, output, -1)
     output.close()
     words.print_my_words(my_words)
@@ -76,23 +73,56 @@ def main():
 
 def main_console():
     print('Elite Speak \nby Alex T. Reese, Ellis Miranda, Jamie Brandon, Kirsten Stallings\n')
+    # open the pickled users
+    try:
+        userfile = open('users.pkl', 'rb')
+        users = load(userfile)
+        userfile.close()
+    except FileNotFoundError:
+        # my_words[defined word] = (numTimesDefined, definition)
+        users = []
+    # Look for the user in users
+    found = False
+    while(not found):
+        login = input("Press L to log in, N for new user: ")
+        if (login == 'L'):
+            username = input("Enter your username: ")
+            if(username in users):
+                my_words = open_pickle_jar(username)
+                found = True
+            else:
+                print("Username not found. Please try again. ")
+        elif(login == 'N'):
+            username = input("Please enter your username: ")
+            if(username not in users):
+                users.append(username)
+                output = open("users.pkl", 'wb')
+                dump(users, output, -1)
+                output.close()
+                my_words = open_pickle_jar(username)
+                found = True
+            else:
+                print("Username already taken.")
+
     # use this to set up a certain level of word use as our list
     vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
     finished = False
     while not finished:
         start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
-            main()
+            main(username)
         elif(start == '2'):
-            my_words = open_pickle_jar()
+            my_words = open_pickle_jar(username)
             f.flashcard_practice(my_words)
         else:
             finished = True
 
-def open_pickle_jar():
+
+
+def open_pickle_jar(picklejar):
     # open the picklejar to remember what's already been defined
     try:
-        input = open("pickle_jar.pkl", 'rb')
+        input = open(picklejar + '.pkl', 'rb')
         my_words = load(input)
         input.close()
     except FileNotFoundError:

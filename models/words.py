@@ -45,17 +45,11 @@ def print_my_words(my_words):
 
 def pretty_print_defs(my_words):
     for word in my_words.keys():
-        s = my_words[word][1]
-        s = s.replace("'", "")
-        pos, part_of_speech, d = s[1:-1].split(':', 2)
-        part_of_speech, junk = part_of_speech.split(",")
-        part_of_speech = part_of_speech[1:]
-        d = d[1:]
         print("%20s %-s " % ("Word: ", word))
-        print("%20s %-s " % ("Part of Speech: ", part_of_speech))
+        print("%20s %-s " % ("Part of Speech: ", my_words[word][3]))
         print("%20s %-s " % ("Times Defined: ", my_words[word][0]))
         print("%20s %-s " % ("Last Time Defined: ", time.ctime(my_words[word][2])))
-
+        d = my_words[word][1]
         if(len(d) < 50):
             print("%20s %s" % ("Definition: ", d))
         else:
@@ -67,19 +61,18 @@ def pretty_print_defs(my_words):
             print("%20s %s" % ("", d))
         print("\n")
 
-def pretty_print_words(lst):
-    for l in lst:
-        word, pos, d = l.split(":", 2)
-        print("%20s %-s " % ("Word: ", word))
-        print("%20s %-s " % ("Part of Speech: ", pos))
-        if (len(d) < 50):
-            print("%20s %s" % ("Definition: ", d))
-        else:
-            print("%20s %s-" % ("Definition: ", d[:50]))
+def pretty_print_word(word, my_words):
+    print("%20s %-s " % ("Word: ", word))
+    print("%20s %-s " % ("Part of Speech: ", my_words[word][3]))
+    d = my_words[word][1]
+    if (len(d) < 50):
+        print("%20s %s" % ("Definition: ", d))
+    else:
+        print("%20s %s-" % ("Definition: ", d[:50]))
+        d = d[50:]
+        while (len(d) > 50):
+            print("%20s %s-" % ("", d[:50]))
             d = d[50:]
-            while (len(d) > 50):
-                print("%20s %s-" % ("", d[:50]))
-                d = d[50:]
-            print("%20s %s" % ("", d))
-        print("\n")
+        print("%20s %s" % ("", d))
+    print("\n")
 
