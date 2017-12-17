@@ -1,4 +1,4 @@
-from models import define, words, speech
+from models import define, words, speech, flashcard as f
 import threading
 import speech_recognition as sr
 from pickle import dump
@@ -54,14 +54,7 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words):
 def main():
     r = sr.Recognizer()
     common_words = words.get_common_words()
-    # open the picklejar to remember what's already been defined
-    try:
-        input = open("pickle_jar.pkl", 'rb')
-        my_words = load(input)
-        input.close()
-    except FileNotFoundError:
-        # my_words[defined word] = (numTimesDefined, definition)
-        my_words = {}
+    my_words = open_pickle_jar()
     threads = []
     word_list = []
     while not done:
@@ -77,6 +70,7 @@ def main():
     output = open("pickle_jar.pkl", 'wb')
     dump(my_words, output, -1)
     output.close()
+    words.print_my_words(my_words)
     return word_list
 
 
@@ -86,12 +80,25 @@ def main_console():
     vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
     finished = False
     while not finished:
-        start = input("\n1 : Start listening\n2 : Quit\n")
+        start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
             main()
-            # words.print_my_words(my_words)
+        elif(start == '2'):
+            my_words = open_pickle_jar()
+            f.flashcard_practice(my_words)
         else:
             finished = True
+
+def open_pickle_jar():
+    # open the picklejar to remember what's already been defined
+    try:
+        input = open("pickle_jar.pkl", 'rb')
+        my_words = load(input)
+        input.close()
+    except FileNotFoundError:
+        # my_words[defined word] = (numTimesDefined, definition)
+        my_words = {}
+    return my_words
 
 
 if __name__ == '__main__':
