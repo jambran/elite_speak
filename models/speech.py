@@ -22,10 +22,16 @@ def listen(r):
     # obtain audio from the microphone
     with sr.Microphone() as source:
         print("listening...")
-        r.adjust_for_ambient_noise(source, duration=1)
-        r.dynamic_energy_threshold = True
-        audio = r.listen(source)
-        return audio
+        try:
+            #r.adjust_for_ambient_noise(source, duration=2)
+            r.energy_threshold = 4000
+            r.dynamic_energy_threshold = True
+            #r.dynamic_energy_adjustment_ratio = 2.0
+            audio = r.listen(source,10)
+            return audio
+        except WaitTimeoutError:
+            print("No speech detected. Returning to main menu")
+            return None
 
 
 def recognize(audio, r):
