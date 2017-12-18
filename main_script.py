@@ -48,9 +48,8 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words):
     word_list[::-1]
 
 
-def listener(username, vocab_level):
+def listener(username, vocab_words):
     r = sr.Recognizer()
-    common_words = words.get_common_words(vocab_level)
     my_class = open_pickle_jar(username)
     my_words = my_class.get_word_list()
     threads = []
@@ -58,17 +57,28 @@ def listener(username, vocab_level):
     while not done:
         voice_input = speech.listen(r)
         # start a thread here
-        thread = threading.Thread(target=thread_work, args=[voice_input, common_words, word_list, r, threads, my_words])
+        thread = threading.Thread(target=thread_work, args=[voice_input, vocab_words, word_list, r, threads, my_words])
         threads.append(thread)
         thread.start()
     # make sure that all threads are finished
     threads[-1].join()
     # textToSpeech.speak_many_things(word_list)
     # pickle my_words
+    words.print_my_words(my_words)
+    word_to_add = input("Add a word here to your vocabulary so it doesn\'t come up again by typing in its name below or hit Enter to continue:\n>")
+    while(word_to_add != ""):
+        if word_to_add in my_words:
+            my_words.pop(word_to_add, None)
+            my_class.add_to_known_words(word_to_add)
+            words.print_my_words(my_words)
+            word_to_add = input("Word added. Add another or hit Enter to continue:\>")
+        else:
+            word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
     output = open(username + ".pkl", 'wb')
     dump(my_class, output, -1)
     output.close()
-    words.print_my_words(my_words)
+    
+    
     return word_list
 
 
@@ -91,7 +101,7 @@ def main_console():
             if(username in users):
                 my_class = open_pickle_jar(username)
                 my_words = my_class.get_word_list()
-                vocab_level = my_class.get_vocab_level()
+                vocab_words = my_class.get_known_words()
                 found = True
             else:
                 print("Username not found. Please try again. ")
@@ -103,13 +113,14 @@ def main_console():
                 while vocab_level != '1' and vocab_level != '2' and vocab_level != '3':
                     print("Invalid selection!\n")
                     vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
+                vocab_words = words.get_common_words(vocab_level)
                 users.append(username)
                 output = open("users.pkl", 'wb')
                 dump(users, output, -1)
                 output.close()
                 #my_words = open_pickle_jar(username)
                 found = True
-                new_user = user.User({}, vocab_level)
+                new_user = user.User(username, {}, vocab_words)
                 output = open(username + ".pkl", 'wb')
                 dump(new_user, output, -1)
                 output.close()
@@ -121,7 +132,7 @@ def main_console():
     while not finished:
         start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
-            listener(username, vocab_level)
+            listener(username, vocab_words)
         elif(start == '2'):
             my_class = open_pickle_jar(username)
             my_words = my_class.get_word_list()
@@ -140,7 +151,7 @@ def open_pickle_jar(picklejar):
         input.close()
     except FileNotFoundError:
         # my_words[defined word] = (numTimesDefined, definition)
-        my_class = user.User({},1)
+        my_class = user.User("",{},{})
     return my_class
 
 
