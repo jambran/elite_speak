@@ -58,6 +58,8 @@ def listener(username, vocab_words):
     word_list = []
     while not done:
         voice_input = speech.listen(r)
+        if voice_input is None:
+            return None
         # start a thread here
         thread = threading.Thread(target=thread_work, args=[voice_input, vocab_words, word_list, r, threads, my_words, lemmatizer])
         threads.append(thread)
