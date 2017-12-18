@@ -4,7 +4,7 @@ import time
 import main_script as ms
 from nltk.stem import WordNetLemmatizer
 
-def get_common_words():
+def get_common_words(level):
     file = 'docs' + os.sep + 'wiki-67k.txt'
     with open(file, 'r') as file:
         words = file.readlines()
