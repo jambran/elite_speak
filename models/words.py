@@ -2,7 +2,7 @@ import os
 import nltk
 import time
 import main_script as ms
-
+from nltk.stem import WordNetLemmatizer
 
 def get_common_words():
     file = 'docs' + os.sep + 'wiki-67k.txt'
@@ -37,6 +37,17 @@ def filter_words(word_pos_list, common_words, my_words):
             except KeyError:
                 toRet.append(w)
     return toRet
+  
+    
+def lemmatize(word):
+    lemmatizer = WordNetLemmatizer()
+    return lemmatizer.lemmatize(word)
+
+
+def lemmatize_words(words):
+    lemmatizer = WordNetLemmatizer()
+    return [lemmatizer.lemmatize(word) for word in words]
+
 
 def print_my_words(my_words):
     print('\nYour words:')
@@ -61,6 +72,7 @@ def pretty_print_defs(my_words):
             print("%20s %s" % ("", d))
         print("\n")
 
+        
 def pretty_print_word(word, my_words):
     print("%20s %-s " % ("Word: ", word))
     print("%20s %-s " % ("Part of Speech: ", my_words[word][3]))

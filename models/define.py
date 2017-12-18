@@ -1,10 +1,11 @@
 from PyDictionary import PyDictionary
+from models import words
 
 
-def generate_definitions(words):
+def generate_definitions(word_list):
     defs = {}  # dict of words and their definitions (specific to part of speech)
     dictionary = PyDictionary()
-    for word, pos in words:
+    for word, pos in word_list:
         if pos.startswith('NN'):  # Noun
             part = 'Noun'
         elif pos.startswith('VB'):  # Verb
@@ -16,11 +17,12 @@ def generate_definitions(words):
         else:
             continue
         try:
-            definitions = dictionary.meaning(word)
+            lemmatized_word = words.lemmatize(word)
+            definitions = dictionary.meaning(lemmatized_word)
             # given that POS_Tagger tags words, if the POS is not found for that word, grabs the first ("default") one
-            if part not in definitions:
+            if not part or part not in definitions:
                 part = list(definitions.keys())[0]
-            defs[word] = {
+            defs[lemmatized_word] = {
                 'pos': part,
                 'def': definitions[part][0]
             }
