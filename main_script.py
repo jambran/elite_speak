@@ -1,4 +1,4 @@
-from models import define, words, speech, flashcard as f
+from models import define, words, speech, user, flashcard as f
 import threading
 import speech_recognition as sr
 from pickle import dump
@@ -48,10 +48,11 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words):
     word_list[::-1]
 
 
-def main(username):
+def listener(username, vocab_level):
     r = sr.Recognizer()
-    common_words = words.get_common_words()
-    my_words = open_pickle_jar(username)
+    common_words = words.get_common_words(vocab_level)
+    my_class = open_pickle_jar(username)
+    my_words = my_class.get_word_list()
     threads = []
     word_list = []
     while not done:
@@ -65,7 +66,7 @@ def main(username):
     # textToSpeech.speak_many_things(word_list)
     # pickle my_words
     output = open(username + ".pkl", 'wb')
-    dump(my_words, output, -1)
+    dump(my_class, output, -1)
     output.close()
     words.print_my_words(my_words)
     return word_list
@@ -85,34 +86,45 @@ def main_console():
     found = False
     while(not found):
         login = input("Press L to log in, N for new user: ")
-        if (login == 'L'):
+        if (login == 'L' or login == 'l'):
             username = input("Enter your username: ")
             if(username in users):
-                my_words = open_pickle_jar(username)
+                my_class = open_pickle_jar(username)
+                my_words = my_class.get_word_list()
+                vocab_level = my_class.get_vocab_level()
                 found = True
             else:
                 print("Username not found. Please try again. ")
-        elif(login == 'N'):
+        elif(login == 'N' or login == 'n'):
             username = input("Please enter your username: ")
             if(username not in users):
+                # use this to set up a certain level of word use as our list
+                vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
+                while vocab_level != '1' and vocab_level != '2' and vocab_level != '3':
+                    print("Invalid selection!\n")
+                    vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
                 users.append(username)
                 output = open("users.pkl", 'wb')
                 dump(users, output, -1)
                 output.close()
-                my_words = open_pickle_jar(username)
+                #my_words = open_pickle_jar(username)
                 found = True
+                new_user = user.User({}, vocab_level)
+                output = open(username + ".pkl", 'wb')
+                dump(new_user, output, -1)
+                output.close()
             else:
                 print("Username already taken.")
 
-    # use this to set up a certain level of word use as our list
-    vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
+    
     finished = False
     while not finished:
         start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
-            main(username)
+            listener(username, vocab_level)
         elif(start == '2'):
-            my_words = open_pickle_jar(username)
+            my_class = open_pickle_jar(username)
+            my_words = my_class.get_word_list()
             f.flashcard_practice(my_words)
         else:
             finished = True
@@ -123,12 +135,13 @@ def open_pickle_jar(picklejar):
     # open the picklejar to remember what's already been defined
     try:
         input = open(picklejar + '.pkl', 'rb')
-        my_words = load(input)
+        my_class = load(input)
+        #my_words = my_class.get_word_list()
         input.close()
     except FileNotFoundError:
         # my_words[defined word] = (numTimesDefined, definition)
-        my_words = {}
-    return my_words
+        my_class = user.User({},1)
+    return my_class
 
 
 if __name__ == '__main__':
