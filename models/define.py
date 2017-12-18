@@ -2,10 +2,10 @@ from PyDictionary import PyDictionary
 from models import words
 
 
-def generate_definitions(words):
+def generate_definitions(word_list):
     defs = {}  # dict of words and their definitions (specific to part of speech)
     dictionary = PyDictionary()
-    for word, pos in words:
+    for word, pos in word_list:
         if pos.startswith('NN'):  # Noun
             part = 'Noun'
         elif pos.startswith('VB'):  # Verb
