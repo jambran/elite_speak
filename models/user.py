@@ -1,19 +1,23 @@
 class User(object):
     WORD_LIST = {}
-    VOCAB_LEVEL = 0
+    KNOWN_WORDS = {}
 
-    def __init__(self, word_list, vocab_level):
+    def __init__(self, username, word_list, vocab_level):
         self.WORD_LIST = word_list
-        self.VOCAB_LEVEL = vocab_level
+        self.KNOWN_WORDS = vocab_level
+        self.username = username
+        
+    def get_known_words(self):
+        return self.KNOWN_WORDS
+        
+    def add_to_known_words(self, word):
+        self.KNOWN_WORDS.get(word,True)
+        
+    def get_username(self):
+        return self.username
         
     def get_word_list(self):
         return self.WORD_LIST
         
-    def get_vocab_level(self):
-        return self.VOCAB_LEVEL
-        
-    def set_vocab_level(self, level):
-        vocab_level = level
-        
     def append_to_word_list(self, word):
-        word_list.append(word)
+        self.WORD_LIST.get(word,True)

@@ -5,7 +5,17 @@ import main_script as ms
 from nltk.stem import WordNetLemmatizer
 
 def get_common_words(level):
-    file = 'docs' + os.sep + 'wiki-67k.txt'
+    fname = ""
+    if level == '1':
+        fname = "wiki-1500.txt"
+    elif level == '2':
+        fname = "wiki-20k.txt"
+    elif level == '3':
+        fname = "wiki-67k.txt"
+    else:
+        print("Something went wrong with vocab list!")
+        fname = "wiki-67k.txt"
+    file = 'docs' + os.sep + fname
     with open(file, 'r') as file:
         words = file.readlines()
     return {w.lower().strip(): True for w in words if not w.strip()[0] == '#'}
