@@ -1,8 +1,9 @@
 from models import define, words, speech, user, flashcard as f
-import threading
-import speech_recognition as sr
+from nltk.stem import WordNetLemmatizer
 from pickle import dump
 from pickle import load
+import threading
+import speech_recognition as sr
 import time
 
 WORD_THRESHOLD = 10 # max number of definitions it'll give after any input
@@ -11,20 +12,20 @@ DEF_NOT_DISPLAYED_WITHIN_TIME = 60 * 60 * 24 * 3 # if the word has been defined 
 done = False
 
 
-def get_definitions(sentence, exclude, my_words):
+def get_definitions(sentence, exclude, my_words, lemmatizer):
     parts_of_speech = words.get_pos(sentence)
     uncommon_words = words.filter_words(parts_of_speech, exclude, my_words)
-    return define.generate_definitions(uncommon_words)
+    return define.generate_definitions(uncommon_words, lemmatizer)
 
 
-def thread_work(voice_input, common_words, word_list, r, threads, my_words):
+def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemmatizer):
     voice_text = speech.recognize(voice_input, r)
     if "conversation over" in voice_text.lower():
         global done
         done = True
         return done
     # gets definitions
-    definition_list = get_definitions(voice_text, common_words, my_words)
+    definition_list = get_definitions(voice_text, common_words, my_words, lemmatizer)
     # formats the definitions
     formatted_definitions = define.parse_speakable_definitions(definition_list)
     # grab the index of this thread in the list
@@ -50,6 +51,7 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words):
 
 def listener(username, vocab_words):
     r = sr.Recognizer()
+    lemmatizer = WordNetLemmatizer()
     my_class = open_pickle_jar(username)
     my_words = my_class.get_word_list()
     threads = []
@@ -57,7 +59,7 @@ def listener(username, vocab_words):
     while not done:
         voice_input = speech.listen(r)
         # start a thread here
-        thread = threading.Thread(target=thread_work, args=[voice_input, vocab_words, word_list, r, threads, my_words])
+        thread = threading.Thread(target=thread_work, args=[voice_input, vocab_words, word_list, r, threads, my_words, lemmatizer])
         threads.append(thread)
         thread.start()
     # make sure that all threads are finished
@@ -139,7 +141,6 @@ def main_console():
             f.flashcard_practice(my_words)
         else:
             finished = True
-
 
 
 def open_pickle_jar(picklejar):

@@ -2,7 +2,7 @@ from PyDictionary import PyDictionary
 from models import words
 
 
-def generate_definitions(word_list):
+def generate_definitions(word_list, lemmatizer):
     defs = {}  # dict of words and their definitions (specific to part of speech)
     dictionary = PyDictionary()
     for word, pos in word_list:
@@ -17,7 +17,7 @@ def generate_definitions(word_list):
         else:
             continue
         try:
-            lemmatized_word = words.lemmatize(word)
+            lemmatized_word = words.lemmatize(word, lemmatizer)
             definitions = dictionary.meaning(lemmatized_word)
             # given that POS_Tagger tags words, if the POS is not found for that word, grabs the first ("default") one
             if not part or part not in definitions:

@@ -2,7 +2,6 @@ import os
 import nltk
 import time
 import main_script as ms
-from nltk.stem import WordNetLemmatizer
 
 def get_common_words(level):
     fname = ""
@@ -36,7 +35,7 @@ def get_pos(sentence):
 
 def filter_words(word_pos_list, common_words, my_words):
     # Returns list of words not in set w
-    #print_my_words(my_words)
+    # print_my_words(my_words)
     toRet = []
     for w in word_pos_list:
         if (w[0] not in common_words):
@@ -49,13 +48,11 @@ def filter_words(word_pos_list, common_words, my_words):
     return toRet
   
     
-def lemmatize(word):
-    lemmatizer = WordNetLemmatizer()
+def lemmatize(word, lemmatizer):
     return lemmatizer.lemmatize(word)
 
 
-def lemmatize_words(words):
-    lemmatizer = WordNetLemmatizer()
+def lemmatize_words(words, lemmatizer):
     return [lemmatizer.lemmatize(word) for word in words]
 
 
