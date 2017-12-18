@@ -3,6 +3,7 @@ import nltk
 import time
 import main_script as ms
 from nltk.stem import WordNetLemmatizer
+import random
 
 def get_common_words(level):
     fname = ""
@@ -12,6 +13,8 @@ def get_common_words(level):
         fname = "wiki-20k.txt"
     elif level == '3':
         fname = "wiki-67k.txt"
+    elif level == '4':
+        return {w.lower().strip(): True for w in vocab_quiz() if not w.strip()[0] == '#'}
     else:
         print("Something went wrong with vocab list!")
         fname = "wiki-67k.txt"
@@ -20,6 +23,25 @@ def get_common_words(level):
         words = file.readlines()
     return {w.lower().strip(): True for w in words if not w.strip()[0] == '#'}
 
+def vocab_quiz():
+    fname = "wiki-67k.txt"
+    file = 'docs' + os.sep + fname
+    with open(file, 'r') as file:
+        words = file.readlines()
+    
+    i = 0
+    while i < len(words):
+        i = i + random.randrange(100,1000)
+        rec = input("Do you know this word? (y/n): " + words[i])
+        if rec.lower() == 'n':
+            print("Vocabulary level set")
+            break
+        elif rec.lower() == 'y':
+            continue
+        else:
+            while rec.lower() != 'y' and rec.lower() != 'n':
+                rec = input("Unrecognized input. Please enter 'y' or 'n':")
+    return words[:i]
 
 def get_pos(sentence):
     words_list = nltk.word_tokenize(sentence)
