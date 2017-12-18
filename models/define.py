@@ -18,7 +18,7 @@ def generate_definitions(words):
         try:
             definitions = dictionary.meaning(word)
             # given that POS_Tagger tags words, if the POS is not found for that word, grabs the first ("default") one
-            if part not in definitions:
+            if not part or part not in definitions:
                 part = list(definitions.keys())[0]
             defs[word] = {
                 'pos': part,
