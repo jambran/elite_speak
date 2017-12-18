@@ -1,5 +1,6 @@
 import os
 import nltk
+from nltk.stem import WordNetLemmatizer
 
 
 def get_common_words():
@@ -23,3 +24,14 @@ def get_pos(sentence):
 def filter_words(words, common_words):
     # Returns list of words not in set w
     return [w for w in words if w[0] not in common_words]
+
+
+def lemmatize(word):
+    lemmatizer = WordNetLemmatizer()
+    return lemmatizer.lemmatize(word)
+
+
+def lemmatize_words(words):
+    lemmatizer = WordNetLemmatizer()
+    return [lemmatizer.lemmatize(word) for word in words]
+
