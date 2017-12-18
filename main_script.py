@@ -73,7 +73,7 @@ def listener(username, vocab_words):
             my_words.pop(word_to_add, None)
             my_class.add_to_known_words(word_to_add)
             words.print_my_words(my_words)
-            word_to_add = input("Word added. Add another or hit Enter to continue:\>")
+            word_to_add = input("Word added. Add another or hit Enter to continue:\n>")
         else:
             word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
     output = open(username + ".pkl", 'wb')
@@ -111,10 +111,10 @@ def main_console():
             username = input("Please enter your username: ")
             if(username not in users):
                 # use this to set up a certain level of word use as our list
-                vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
-                while vocab_level != '1' and vocab_level != '2' and vocab_level != '3':
+                vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
+                while vocab_level != '1' and vocab_level != '2' and vocab_level != '3' and vocab_level != '4':
                     print("Invalid selection!\n")
-                    vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n")
+                    vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
                 vocab_words = words.get_common_words(vocab_level)
                 users.append(username)
                 output = open("users.pkl", 'wb')
@@ -154,7 +154,6 @@ def open_pickle_jar(picklejar):
         # my_words[defined word] = (numTimesDefined, definition)
         my_class = user.User("",{},{})
     return my_class
-
-
+    
 if __name__ == '__main__':
     main_console()
