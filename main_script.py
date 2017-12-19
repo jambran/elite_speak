@@ -5,6 +5,7 @@ from pickle import load
 import threading
 import speech_recognition as sr
 import time
+import os
 
 WORD_THRESHOLD = 10 # max number of definitions it'll give after any input
 MAX_TIMES_WORD_DEF_DISPLAYED = 4 # will show definition this many times, then assume that you remember it
@@ -119,13 +120,13 @@ def main_console():
                     vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
                 vocab_words = words.get_common_words(vocab_level)
                 users.append(username)
-                output = open("users.pkl", 'wb')
+                output = open(os.path.join(".", "data", "users", "users.pkl"), 'wb')
                 dump(users, output, -1)
                 output.close()
                 #my_words = open_pickle_jar(username)
                 found = True
                 new_user = user.User(username, {}, vocab_words)
-                output = open(username + ".pkl", 'wb')
+                output = open(os.path.join(".", "data", "users", username + ".pkl"), 'wb')
                 dump(new_user, output, -1)
                 output.close()
             else:
@@ -146,9 +147,9 @@ def main_console():
 def open_pickle_jar(picklejar):
     # open the picklejar to remember what's already been defined
     try:
-        input = open(picklejar + '.pkl', 'rb')
+        input = open(os.path.join(".", "data", "users", picklejar + ".pkl"), 'rb')
         my_class = load(input)
-        #my_words = my_class.get_word_list()
+        # my_words = my_class.get_word_list()
         input.close()
     except FileNotFoundError:
         # my_words[defined word] = (numTimesDefined, definition)
