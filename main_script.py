@@ -21,7 +21,6 @@ def get_definitions(sentence, exclude, my_words, lemmatizer):
 
 def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemmatizer):
     voice_text = speech.recognize(voice_input, r)
-    print(voice_text.lower())
     if "conversation over" in voice_text.lower():
         global done
         done = True
@@ -82,9 +81,7 @@ def listener(username, vocab_words):
             word_to_add = input("Word added. Add another or hit Enter to continue:\n>")
         else:
             word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
-    my_class.store_word_list(my_words)
-    #print(my_class.get_word_list())
-    output = open(username + ".pkl", 'wb')
+    output = open(os.path.join(".", "data", "users", username + ".pkl"), 'wb')
     dump(my_class, output, -1)
     output.close()
     return
@@ -160,8 +157,6 @@ def main_console():
             listener(username, vocab_words)
         elif start == '2':
             my_class = open_pickle_jar(username)
-            my_words = my_class.get_word_list()
-            print(my_words)
             f.flashcard_practice(my_words)
         else:
             return
@@ -172,7 +167,6 @@ def open_pickle_jar(picklejar):
     try:
         input = open(os.path.join(".", "data", "users", picklejar + ".pkl"), 'rb')
         my_class = load(input)
-        print(my_class.get_word_list())
         input.close()
     except FileNotFoundError:
         # my_words[defined word] = (numTimesDefined, definition)

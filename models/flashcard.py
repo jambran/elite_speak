@@ -5,6 +5,9 @@ def flashcard_practice(my_words):
     guess = ""
     points = 0
     attempts = 0
+    if(not my_words): #if the dictionary is empty
+        print("You don't have any words to practice yet.")
+        return
     while(guess != 'q'):
         word = rand.choice(list(my_words))
         tple = my_words[word]
@@ -25,7 +28,7 @@ def flashcard_practice(my_words):
                 if(guess.lower() == word.lower()):
                     points += 1
                     print("Correct!\n\n")
-                    break;
+                    break
                 again = input("Do you want to guess again? [y/n]  ")
             print("The word was: " + word + "\n")
     try:
