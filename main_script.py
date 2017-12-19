@@ -5,6 +5,7 @@ from pickle import load
 import threading
 import speech_recognition as sr
 import time
+import os
 
 WORD_THRESHOLD = 10 # max number of definitions it'll give after any input
 MAX_TIMES_WORD_DEF_DISPLAYED = 4 # will show definition this many times, then assume that you remember it
@@ -70,7 +71,7 @@ def listener(username, vocab_words):
     # pickle my_words
     words.print_my_words(my_words)
     word_to_add = input("Add a word here to your vocabulary so it doesn\'t come up again by typing in its name below or hit Enter to continue:\n>")
-    while(word_to_add != ""):
+    while word_to_add != "":
         if word_to_add in my_words:
             my_words.pop(word_to_add, None)
             my_class.add_to_known_words(word_to_add)
@@ -81,8 +82,6 @@ def listener(username, vocab_words):
     output = open(username + ".pkl", 'wb')
     dump(my_class, output, -1)
     output.close()
-    
-    
     return word_list
 
 
@@ -90,7 +89,7 @@ def main_console():
     print('Elite Speak \nby Alex T. Reese, Ellis Miranda, Jamie Brandon, Kirsten Stallings\n')
     # open the pickled users
     try:
-        userfile = open('users.pkl', 'rb')
+        userfile = open(os.path.join(".", "data", "users", "users.pkl"), 'rb')
         users = load(userfile)
         userfile.close()
     except FileNotFoundError:
@@ -98,20 +97,20 @@ def main_console():
         users = []
     # Look for the user in users
     found = False
-    while(not found):
-        login = input("Press L to log in, N for new user: ")
-        if (login == 'L' or login == 'l'):
+    while not found:
+        login = input("Press L to log in, N for new user, M to manage users: ")
+        if login.lower() == 'l':
             username = input("Enter your username: ")
-            if(username in users):
+            if username in users:
                 my_class = open_pickle_jar(username)
                 my_words = my_class.get_word_list()
                 vocab_words = my_class.get_known_words()
                 found = True
             else:
                 print("Username not found. Please try again. ")
-        elif(login == 'N' or login == 'n'):
+        elif login.lower() == 'n':
             username = input("Please enter your username: ")
-            if(username not in users):
+            if username not in users:
                 # use this to set up a certain level of word use as our list
                 vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
                 while vocab_level != '1' and vocab_level != '2' and vocab_level != '3' and vocab_level != '4':
@@ -119,25 +118,40 @@ def main_console():
                     vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
                 vocab_words = words.get_common_words(vocab_level)
                 users.append(username)
-                output = open("users.pkl", 'wb')
+                output = open(os.path.join(".", "data", "users", "users.pkl"), 'wb')
                 dump(users, output, -1)
                 output.close()
-                #my_words = open_pickle_jar(username)
                 found = True
                 new_user = user.User(username, {}, vocab_words)
-                output = open(username + ".pkl", 'wb')
+                output = open(os.path.join(".", "data", "users", username + ".pkl"), 'wb')
                 dump(new_user, output, -1)
                 output.close()
             else:
                 print("Username already taken.")
+        elif login.lower() == 'm':
+            choice = input("\nSelect:\n1 : Delete User\n")
+            if choice == '1':
+                username = input('Enter username to remove: ')
+                if username in users:
+                    try:
+                        users.remove(username)
+                        output = open(os.path.join(".", "data", "users", "users.pkl"), 'wb')
+                        dump(users, output, -1)
+                        output.close()
+                        os.remove(os.path.join(".", "data", "users", username + ".pkl"))
+                        print("Successfully deleted account: {}.".format(username))
+                    except FileNotFoundError:
+                        print("There was an issue deleting the user. Please try again later.")
 
-    
+                else:
+                    print("Username not found. Please try again.")
+
     finished = False
     while not finished:
-        start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
+        start = input("\nSelect:\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
             listener(username, vocab_words)
-        elif(start == '2'):
+        elif start == '2':
             my_class = open_pickle_jar(username)
             my_words = my_class.get_word_list()
             f.flashcard_practice(my_words)
@@ -148,14 +162,15 @@ def main_console():
 def open_pickle_jar(picklejar):
     # open the picklejar to remember what's already been defined
     try:
-        input = open(picklejar + '.pkl', 'rb')
+        input = open(os.path.join(".", "data", "users", picklejar + ".pkl"), 'rb')
         my_class = load(input)
-        #my_words = my_class.get_word_list()
+        # my_words = my_class.get_word_list()
         input.close()
     except FileNotFoundError:
         # my_words[defined word] = (numTimesDefined, definition)
         my_class = user.User("",{},{})
     return my_class
-    
+
+
 if __name__ == '__main__':
     main_console()

@@ -4,6 +4,7 @@ import time
 import main_script as ms
 import random
 
+
 def get_common_words(level):
     fname = ""
     if level == '1':
@@ -21,6 +22,7 @@ def get_common_words(level):
     with open(file, 'r') as file:
         words = file.readlines()
     return {w.lower().strip(): True for w in words if not w.strip()[0] == '#'}
+
 
 def vocab_quiz():
     fname = "wiki-67k.txt"
@@ -41,6 +43,7 @@ def vocab_quiz():
             while rec.lower() != 'y' and rec.lower() != 'n':
                 rec = input("Unrecognized input. Please enter 'y' or 'n':")
     return words[:i]
+
 
 def get_pos(sentence):
     words_list = nltk.word_tokenize(sentence)
