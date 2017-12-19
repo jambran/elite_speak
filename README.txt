@@ -1,4 +1,4 @@
-# Elite Speak #
+Elite Speak
 
 Don't you hate it when you don't understand what someone is saying? Now, with Elite Speak, just press record and all those complicated words will be defined as they speak!
 
@@ -14,7 +14,7 @@ Lizzie Koshelev
 
 
 
-## Dependencies: Speech Recognizer (Google Speech Recognition), PyAudio, and PyDictionary ##
+Dependencies: Speech Recognizer (Google Speech Recognition), PyAudio, and PyDictionary
 	pip install SpeechRecognition
 	pip install PyDictionary
 	pip install PyAudio
@@ -23,7 +23,6 @@ Can be run from the command line by typing:
 	python3 main_script.py
 
 
-## Watch Out ##
 
 There's an external error from speech recognition that users should ignore. 
 
