@@ -98,20 +98,20 @@ def main_console():
         users = []
     # Look for the user in users
     found = False
-    while(not found):
+    while not found:
         login = input("Press L to log in, N for new user: ")
-        if (login == 'L' or login == 'l'):
+        if login == 'L' or login == 'l':
             username = input("Enter your username: ")
-            if(username in users):
+            if username in users:
                 my_class = open_pickle_jar(username)
                 my_words = my_class.get_word_list()
                 vocab_words = my_class.get_known_words()
                 found = True
             else:
                 print("Username not found. Please try again. ")
-        elif(login == 'N' or login == 'n'):
+        elif login == 'N' or login == 'n':
             username = input("Please enter your username: ")
-            if(username not in users):
+            if username not in users:
                 # use this to set up a certain level of word use as our list
                 vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
                 while vocab_level != '1' and vocab_level != '2' and vocab_level != '3' and vocab_level != '4':
@@ -130,14 +130,12 @@ def main_console():
                 output.close()
             else:
                 print("Username already taken.")
-
-    
     finished = False
     while not finished:
         start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
             listener(username, vocab_words)
-        elif(start == '2'):
+        elif start == '2':
             my_class = open_pickle_jar(username)
             my_words = my_class.get_word_list()
             f.flashcard_practice(my_words)
@@ -156,6 +154,7 @@ def open_pickle_jar(picklejar):
         # my_words[defined word] = (numTimesDefined, definition)
         my_class = user.User("",{},{})
     return my_class
-    
+
+
 if __name__ == '__main__':
     main_console()
