@@ -79,7 +79,7 @@ def listener(username, vocab_words):
             word_to_add = input("Word added. Add another or hit Enter to continue:\n>")
         else:
             word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
-    output = open(username + ".pkl", 'wb')
+    output = open(os.path.join(".", "data", "users", username + ".pkl"), 'wb')
     dump(my_class, output, -1)
     output.close()
     return word_list
