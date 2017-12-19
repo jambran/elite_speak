@@ -89,7 +89,7 @@ def main_console():
     print('Elite Speak \nby Alex T. Reese, Ellis Miranda, Jamie Brandon, Kirsten Stallings\n')
     # open the pickled users
     try:
-        userfile = open('users.pkl', 'rb')
+        userfile = open(os.path.join(".", "data", "users", "users.pkl"), 'rb')
         users = load(userfile)
         userfile.close()
     except FileNotFoundError:
