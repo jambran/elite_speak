@@ -101,7 +101,7 @@ def main_console():
     found = False
     while not found:
         login = input("Press L to log in, N for new user: ")
-        if login == 'L' or login == 'l':
+        if login.lower() == 'l':
             username = input("Enter your username: ")
             if username in users:
                 my_class = open_pickle_jar(username)
@@ -110,7 +110,7 @@ def main_console():
                 found = True
             else:
                 print("Username not found. Please try again. ")
-        elif login == 'N' or login == 'n':
+        elif login.lower() == 'n':
             username = input("Please enter your username: ")
             if username not in users:
                 # use this to set up a certain level of word use as our list
