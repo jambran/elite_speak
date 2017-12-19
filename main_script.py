@@ -10,17 +10,27 @@ import os
 WORD_THRESHOLD = 10 # max number of definitions it'll give after any input
 MAX_TIMES_WORD_DEF_DISPLAYED = 4 # will show definition this many times, then assume that you remember it
 DEF_NOT_DISPLAYED_WITHIN_TIME = 60 * 60 * 24 * 3 # if the word has been defined in this time frame, assumes you remember the definition
-done = False
+done = False # Control variable to stop listener threads
 
 
 def get_definitions(sentence, exclude, my_words, lemmatizer):
+    """
+    Calls external methods to lookup and store definitions
+    for flagged words
+    """
     parts_of_speech = words.get_pos(sentence)
     uncommon_words = words.filter_words(parts_of_speech, exclude, my_words)
     return define.generate_definitions(uncommon_words, lemmatizer)
 
 
 def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemmatizer):
+    """
+    Speech parsing handled by each different thread whenever audio is captured.
+    """
+    # Process audio file here to speed up listener
     voice_text = speech.recognize(voice_input, r)
+    # If speaker says 'conversation over' then end all listening.
+    # Will probably be handled by a button or something in the future
     if "conversation over" in voice_text.lower():
         global done
         done = True
@@ -38,6 +48,7 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemm
     # will reorganize the list to include new entries (theoretically this works)
     word_list[::-1]
     word_list.extend(formatted_definitions)
+    #Only display a predefined number of definitions at a time (currently 10)
     if len(word_list) > WORD_THRESHOLD:
         word_list = word_list[len(list) - WORD_THRESHOLD:]
     # put words and defs in personal dictionary, my_words
@@ -52,10 +63,14 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemm
 
 
 def listener(username, vocab_words):
+    """
+    Handles listening and pickles the results
+    """
     r = sr.Recognizer()
     lemmatizer = WordNetLemmatizer()
     my_class = open_pickle_jar(username)
-    my_words = my_class.get_word_list()
+    
+    # Listen to microphone and spawn threads to process audio each time it is captured
     threads = []
     word_list = []
     while not done:
@@ -70,24 +85,38 @@ def listener(username, vocab_words):
     if len(threads) > 0:
         threads[-1].join()
     # textToSpeech.speak_many_things(word_list)
-    # pickle my_words
+    # Print results
     words.print_my_words(my_words)
-    word_to_add = input("Add a word here to your vocabulary so it doesn\'t come up again by typing in its name below or hit Enter to continue:\n>")
-    while word_to_add != "":
-        if word_to_add in my_words:
-            my_words.pop(word_to_add, None)
-            my_class.add_to_known_words(word_to_add)
-            words.print_my_words(my_words)
-            word_to_add = input("Word added. Add another or hit Enter to continue:\n>")
-        else:
-            word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
+    add_word(my_class)
+    # pickle my_class
     output = open(os.path.join(".", "data", "users", username + ".pkl"), 'wb')
     dump(my_class, output, -1)
     output.close()
     return
 
+def add_word(my_class):
+    """
+    Allows user to permanently add a word to their vocabulary so that it is not flagged in the future.
+    """
+    my_words = my_class.get_word_list()
+    # User types word to add from words in my_words
+    word_to_add = input("Add a word here to your vocabulary so it doesn\'t come up again by typing in its name below or hit Enter to continue:\n>")
+    while word_to_add != "":
+        if word_to_add in my_words:
+            my_words.pop(word_to_add, None)
+            my_class.add_to_known_words(word_to_add)
+            # Print remaining words in my_words and let user add another word
+            words.print_my_words(my_words)
+            word_to_add = input("Word added. Add another or hit Enter to continue:\n>")
+        else:
+            word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
+    return
 
 def main_console():
+    """
+    The 'main' method. Gets user profile on startup and controls access to other
+    methods.
+    """
     print('Elite Speak \nby Alex T. Reese, Ellis Miranda, Jamie Brandon, Kirsten Stallings\n')
     # open the pickled users
     try:
@@ -101,6 +130,7 @@ def main_console():
     found = False
     while not found:
         login = input("Press L to log in, N for new user, M to manage users: ")
+        # Loads existing user profile (pickled class)
         if login.lower() == 'l':
             username = input("Enter your username: ")
             if username in users:
@@ -110,6 +140,7 @@ def main_console():
                 found = True
             else:
                 print("Username not found. Please try again. ")
+        # Creates new user profile (User class)
         elif login.lower() == 'n':
             username = input("Please enter your username: ")
             if username not in users:
@@ -118,8 +149,10 @@ def main_console():
                 while vocab_level != '1' and vocab_level != '2' and vocab_level != '3' and vocab_level != '4':
                     print("Invalid selection!\n")
                     vocab_level = input("Select grade level:\n1 : Elementary School\n2 : High School\n3 : College\n4 : Take quiz\n")
+                # Add known words based on vocab test or predetermined vocab level
                 vocab_words = words.get_common_words(vocab_level)
                 users.append(username)
+                # Pickle results
                 output = open(os.path.join(".", "data", "users", "users.pkl"), 'wb')
                 dump(users, output, -1)
                 output.close()
@@ -130,6 +163,7 @@ def main_console():
                 output.close()
             else:
                 print("Username already taken.")
+        #Account management (current just lets user delete accounts)
         elif login.lower() == 'm':
             choice = input("\nSelect:\n1 : Delete User\n")
             if choice == '1':
@@ -163,7 +197,9 @@ def main_console():
 
 
 def open_pickle_jar(picklejar):
-    # open the picklejar to remember what's already been defined
+    """
+    Loads user profile from pickled file
+    """
     try:
         input = open(os.path.join(".", "data", "users", picklejar + ".pkl"), 'rb')
         my_class = load(input)

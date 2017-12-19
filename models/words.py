@@ -6,6 +6,10 @@ import random
 
 
 def get_common_words(level):
+    """
+    Determines how many words the user knows based on their input. 
+    Currently extremely rough estimates. Needs a lot of refining
+    """
     fname = ""
     if level == '1':
         fname = "wiki-1500.txt"
@@ -25,6 +29,11 @@ def get_common_words(level):
 
 
 def vocab_quiz():
+    """
+    Short quiz that randomly picks increasingly uncommon words. 
+    When the user indicates they don't recognize a word, returns previous
+    word as their vocabulary.
+    """
     fname = "wiki-67k.txt"
     file = 'docs' + os.sep + fname
     with open(file, 'r') as file:
@@ -35,6 +44,7 @@ def vocab_quiz():
         i = i + random.randrange(100,1000)
         rec = input("Do you know this word? (y/n): " + words[i])
         if rec.lower() == 'n':
+            i = i - 1
             print("Vocabulary level set")
             break
         elif rec.lower() == 'y':
@@ -46,6 +56,9 @@ def vocab_quiz():
 
 
 def get_pos(sentence):
+    """
+    Uses nltk to determine the parts of speech for words in passed sentence
+    """
     words_list = nltk.word_tokenize(sentence)
     new_list = []
     if len(words_list) == 0:
@@ -59,12 +72,18 @@ def get_pos(sentence):
 
 
 def filter_words(word_pos_list, common_words, my_words):
+    """
+    Gets rid of words that shouldn't get definitions.
+    """
     # Returns list of words not in set w
     # print_my_words(my_words)
     toRet = []
     for w in word_pos_list:
+        # First gets rid of words in user's vocab
         if (w[0] not in common_words):
             try:
+                # Also gets rid of words that have been recently defined or determined to 
+                # have been learned.
                 if (my_words[w[0]][2] < time.time() - ms.DEF_NOT_DISPLAYED_WITHIN_TIME
                     or my_words[w[0]][0] < ms.MAX_TIMES_WORD_DEF_DISPLAYED):
                     toRet.append(w)
@@ -74,19 +93,32 @@ def filter_words(word_pos_list, common_words, my_words):
   
     
 def lemmatize(word, lemmatizer):
+    """
+    Lemmatizes a single word
+    """
     return lemmatizer.lemmatize(word)
 
 
 def lemmatize_words(words, lemmatizer):
+    """
+    Lemmatizes all words in a list
+    """
     return [lemmatizer.lemmatize(word) for word in words]
 
 
 def print_my_words(my_words):
+    """
+    Print all entries in my_words
+    """
     print('\nYour words:')
     pretty_print_defs(my_words)
+    return
 
 
 def pretty_print_defs(my_words):
+    """
+    Prints all entries in my_words with pretty formatting
+    """
     for word in my_words.keys():
         print("%20s %-s " % ("Word: ", word))
         print("%20s %-s " % ("Part of Speech: ", my_words[word][3]))
@@ -103,9 +135,12 @@ def pretty_print_defs(my_words):
                 d = d[50:]
             print("%20s %s" % ("", d))
         print("\n")
-
+    return
         
 def pretty_print_word(word, my_words):
+    """
+    Prints a single word with pretty formatting
+    """
     print("%20s %-s " % ("Word: ", word))
     print("%20s %-s " % ("Part of Speech: ", my_words[word][3]))
     d = my_words[word][1]
@@ -119,4 +154,4 @@ def pretty_print_word(word, my_words):
             d = d[50:]
         print("%20s %s" % ("", d))
     print("\n")
-
+    return
