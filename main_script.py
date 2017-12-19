@@ -71,7 +71,7 @@ def listener(username, vocab_words):
     # pickle my_words
     words.print_my_words(my_words)
     word_to_add = input("Add a word here to your vocabulary so it doesn\'t come up again by typing in its name below or hit Enter to continue:\n>")
-    while(word_to_add != ""):
+    while word_to_add != "":
         if word_to_add in my_words:
             my_words.pop(word_to_add, None)
             my_class.add_to_known_words(word_to_add)
@@ -82,8 +82,6 @@ def listener(username, vocab_words):
     output = open(username + ".pkl", 'wb')
     dump(my_class, output, -1)
     output.close()
-    
-    
     return word_list
 
 
@@ -123,7 +121,6 @@ def main_console():
                 output = open(os.path.join(".", "data", "users", "users.pkl"), 'wb')
                 dump(users, output, -1)
                 output.close()
-                #my_words = open_pickle_jar(username)
                 found = True
                 new_user = user.User(username, {}, vocab_words)
                 output = open(os.path.join(".", "data", "users", username + ".pkl"), 'wb')
