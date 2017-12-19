@@ -98,7 +98,7 @@ def main_console():
     # Look for the user in users
     found = False
     while not found:
-        login = input("Press L to log in, N for new user: ")
+        login = input("Press L to log in, N for new user, M to manage users: ")
         if login.lower() == 'l':
             username = input("Enter your username: ")
             if username in users:
@@ -128,9 +128,27 @@ def main_console():
                 output.close()
             else:
                 print("Username already taken.")
+        elif login.lower() == 'm':
+            choice = input("\nSelect:\n1 : Delete User\n")
+            if choice == '1':
+                username = input('Enter username to remove: ')
+                if username in users:
+                    try:
+                        users.remove(username)
+                        output = open(os.path.join(".", "data", "users", "users.pkl"), 'wb')
+                        dump(users, output, -1)
+                        output.close()
+                        os.remove(os.path.join(".", "data", "users", username + ".pkl"))
+                        print("Successfully deleted account: {}.".format(username))
+                    except FileNotFoundError:
+                        print("There was an issue deleting the user. Please try again later.")
+
+                else:
+                    print("Username not found. Please try again.")
+
     finished = False
     while not finished:
-        start = input("\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
+        start = input("\nSelect:\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
             listener(username, vocab_words)
         elif start == '2':
