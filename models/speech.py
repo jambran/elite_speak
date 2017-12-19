@@ -21,12 +21,13 @@ def say_definitions(definitions):
 def listen(r):
     # obtain audio from the microphone
     with sr.Microphone() as source:
+        
         print("listening...")
         try:
-            #r.adjust_for_ambient_noise(source, duration=2)
-            r.energy_threshold = 4000
+            r.adjust_for_ambient_noise(source, duration=1)
+            #r.energy_threshold = 4000
             r.dynamic_energy_threshold = True
-            #r.dynamic_energy_adjustment_ratio = 2.0
+            r.dynamic_energy_adjustment_ratio = 1.5
             audio = r.listen(source,10)
             return audio
         except WaitTimeoutError:

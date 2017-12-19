@@ -21,6 +21,7 @@ def get_definitions(sentence, exclude, my_words, lemmatizer):
 
 def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemmatizer):
     voice_text = speech.recognize(voice_input, r)
+    print(voice_text.lower())
     if "conversation over" in voice_text.lower():
         global done
         done = True
@@ -48,6 +49,7 @@ def thread_work(voice_input, common_words, word_list, r, threads, my_words, lemm
             my_words[k] = (1, definition_list[k]['def'], time.time(), definition_list[k]['pos'])
         words.pretty_print_word(k, my_words)
     word_list[::-1]
+    return
 
 
 def listener(username, vocab_words):
@@ -66,7 +68,8 @@ def listener(username, vocab_words):
         threads.append(thread)
         thread.start()
     # make sure that all threads are finished
-    threads[-1].join()
+    if len(threads) > 0:
+        threads[-1].join()
     # textToSpeech.speak_many_things(word_list)
     # pickle my_words
     words.print_my_words(my_words)
@@ -79,10 +82,12 @@ def listener(username, vocab_words):
             word_to_add = input("Word added. Add another or hit Enter to continue:\n>")
         else:
             word_to_add = input("Unrecognized input. Add a word or hit Enter to continue:\n>")
+    my_class.store_word_list(my_words)
+    #print(my_class.get_word_list())
     output = open(username + ".pkl", 'wb')
     dump(my_class, output, -1)
     output.close()
-    return word_list
+    return
 
 
 def main_console():
@@ -150,13 +155,16 @@ def main_console():
     while not finished:
         start = input("\nSelect:\n1 : Start listening\n2 : Flashcard Practice\n3 : Quit\n")
         if start == '1':
+            global done
+            done = False
             listener(username, vocab_words)
         elif start == '2':
             my_class = open_pickle_jar(username)
             my_words = my_class.get_word_list()
+            print(my_words)
             f.flashcard_practice(my_words)
         else:
-            finished = True
+            return
 
 
 def open_pickle_jar(picklejar):
@@ -164,7 +172,7 @@ def open_pickle_jar(picklejar):
     try:
         input = open(os.path.join(".", "data", "users", picklejar + ".pkl"), 'rb')
         my_class = load(input)
-        # my_words = my_class.get_word_list()
+        print(my_class.get_word_list())
         input.close()
     except FileNotFoundError:
         # my_words[defined word] = (numTimesDefined, definition)
